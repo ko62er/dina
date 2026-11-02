@@ -58,6 +58,9 @@
 </head>
 <body class="flex items-center justify-center p-3 sm:p-6 relative select-none">
 
+    <!-- Audio Element pointing directly to HPM.mp3 on GitHub -->
+    <audio id="bg-music" loop src="HPM.mp3" preload="auto"></audio>
+
     <!-- Background Magic Stars -->
     <div class="bg-stars" id="stars-container"></div>
 
@@ -101,17 +104,24 @@
         <!-- Dynamic Level Content Screen Area -->
         <div id="screen-content" class="my-auto py-2">
             <!-- Screen 0: Welcome -->
-            <div id="screen-welcome" class="text-center space-y-5">
-                <div class="w-24 h-24 mx-auto rounded-full bg-purple-900/50 flex items-center justify-center text-5xl shadow-[0_0_20px_rgba(251,191,36,0.3)] border-2 border-amber-400/60">
-                    🦉
+            <div id="screen-welcome" class="text-center space-y-4">
+                <!-- Magic Photo Frame -->
+                <div class="relative w-28 h-28 mx-auto">
+                    <div class="w-full h-full rounded-full overflow-hidden bg-purple-900/50 shadow-[0_0_25px_rgba(251,191,36,0.5)] border-2 border-amber-400/80 flex items-center justify-center relative">
+                        <img id="user-photo-preview" src="https://placehold.co/150x150/2e1065/fbbf24?text=Princess" alt="Портрет Именинницы" class="w-full h-full object-cover">
+                    </div>
+                    <label for="photo-upload" class="absolute -bottom-1 -right-1 bg-amber-500 hover:bg-amber-600 text-slate-950 p-2 rounded-full cursor-pointer shadow-lg border border-amber-300 transition text-xs" title="Загрузить фото">
+                        📸
+                    </label>
+                    <input type="file" id="photo-upload" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
                 </div>
                 <div>
                     <h1 class="text-3xl font-bold text-amber-300 font-magic gold-text-glow">С Днем Рождения!</h1>
-                    <p class="text-purple-200 text-sm mt-2 leading-relaxed">
-                        Сегодня наш дом превратился в волшебный Хогвартс. Тебе предстоит пройти 8 испытай и найти все спрятанные подарки!
+                    <p class="text-purple-200 text-xs mt-1 leading-relaxed">
+                        Сегодня наш дом превратился в волшебный Хогвартс. Тебе предстоит пройти 8 испытаний и найти все спрятанные подарки!
                     </p>
                 </div>
-                <div class="bg-purple-950/60 p-4 rounded-2xl border border-amber-400/30 text-xs text-amber-200 leading-normal shadow-inner">
+                <div class="bg-purple-950/60 p-3 rounded-2xl border border-amber-400/30 text-[11px] text-amber-200 leading-normal shadow-inner">
                     🪄 **Правила:** Каждая разгаданная загадка открывает место в доме, где лежат тайники!
                 </div>
                 <button onclick="nextLevel()" class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-purple-600 text-white font-bold rounded-2xl shadow-[0_0_20px_rgba(251,191,36,0.4)] border border-amber-300 hover:brightness-110 transform active:scale-95 transition font-magic">
@@ -142,98 +152,36 @@
 
     <script>
         /* --------------------------------------------------
-           1. HARRY POTTER HEDWIG'S THEME SYNTHESIZER
-           Plays iconic Hedwig's Theme using Web Audio API Celesta sound
+           1. MP3 AUDIO MANAGEMENT (HPM.mp3)
         -------------------------------------------------- */
-        let audioCtx = null;
+        const bgMusic = document.getElementById('bg-music');
         let isMuted = false;
-        let isPlaying = false;
-        let hpTimeout = null;
 
-        // Frequencies for Harry Potter notes
-        const NOTES = {
-            B4: 493.88, E5: 659.25, G5: 783.99, Fs5: 739.99, B5: 987.77, A5: 880.00,
-            Ds5: 622.25, D5: 587.33, As4: 466.16, G4: 392.00, Fs4: 369.99
-        };
-
-        // Hedwig's Theme Score sequence: [note, duration (ms)]
-        const hpSequence = [
-            [NOTES.B4, 400], [NOTES.E5, 600], [NOTES.G5, 300], [NOTES.Fs5, 400],
-            [NOTES.E5, 800], [NOTES.B5, 400], [NOTES.A5, 1100], [NOTES.Fs5, 1100],
-            [NOTES.E5, 600], [NOTES.G5, 300], [NOTES.Fs5, 400], [NOTES.Ds5, 800],
-            [NOTES.F5 || NOTES.D5, 500], [NOTES.B4, 1200],
-            
-            [NOTES.B4, 400], [NOTES.E5, 600], [NOTES.G5, 300], [NOTES.Fs5, 400],
-            [NOTES.E5, 800], [NOTES.B5, 400], [NOTES.D5*2 || 1174, 700], [NOTES.Cs5 || 1108, 400],
-            [NOTES.C5 || 1046, 700], [NOTES.G4, 400], [NOTES.C5 || 1046, 600], [NOTES.B5, 300],
-            [NOTES.As4, 400], [NOTES.B4, 800], [NOTES.E5, 1200]
-        ];
-
-        function initAudio() {
-            if (audioCtx) return;
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            audioCtx = new AudioContext();
-        }
-
-        function playCelestaNote(freq, durationMs) {
-            if (!audioCtx || isMuted || !isPlaying || !freq) return;
-            const now = audioCtx.currentTime;
-            
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            
-            // Sine wave + harmonic for magical bell/celesta chime
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(freq, now);
-            
-            gain.gain.setValueAtTime(0.001, now);
-            gain.gain.linearRampToValueAtTime(0.12, now + 0.05); // Attack
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + (durationMs / 1000) * 1.5); // Soft bell decay
-            
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            
-            osc.start(now);
-            osc.stop(now + (durationMs / 1000) * 1.6);
-        }
-
-        function playHarryPotterTheme() {
-            let noteIdx = 0;
-            
-            function step() {
-                if (!isPlaying || isMuted) return;
-                const [freq, duration] = hpSequence[noteIdx];
-                playCelestaNote(freq, duration);
-                
-                noteIdx = (noteIdx + 1) % hpSequence.length;
-                hpTimeout = setTimeout(step, duration + 80);
+        function playAudio() {
+            if (bgMusic) {
+                bgMusic.play().then(() => {
+                    document.getElementById('music-toggle-btn').textContent = '🔊';
+                }).catch(e => {
+                    console.log("Autoplay issue handled:", e);
+                });
             }
-
-            step();
         }
 
         function toggleAudio() {
             const btn = document.getElementById('music-toggle-btn');
-            if (isMuted) {
+            if (bgMusic.paused) {
+                bgMusic.play();
                 isMuted = false;
-                isPlaying = true;
-                if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-                playHarryPotterTheme();
                 btn.textContent = '🔊';
             } else {
+                bgMusic.pause();
                 isMuted = true;
-                isPlaying = false;
-                if (hpTimeout) clearTimeout(hpTimeout);
                 btn.textContent = '🔇';
             }
         }
 
         document.getElementById('start-app-btn').addEventListener('click', () => {
-            initAudio();
-            audioCtx.resume().then(() => {
-                isPlaying = true;
-                playHarryPotterTheme();
-            });
+            playAudio();
             document.getElementById('audio-start-overlay').classList.add('hidden');
             document.getElementById('app-container').classList.remove('hidden');
         });
@@ -245,6 +193,20 @@
         -------------------------------------------------- */
         let currentLevel = 0;
         const totalLevels = 8;
+        let userPhotoDataUrl = "https://placehold.co/150x150/2e1065/fbbf24?text=Princess";
+
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    userPhotoDataUrl = e.target.result;
+                    const imgElem = document.getElementById('user-photo-preview');
+                    if (imgElem) imgElem.src = userPhotoDataUrl;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
 
         // EDITABLE LOCATIONS AND CLUES FOR YOUR HOME!
         const clues = {
@@ -532,17 +494,20 @@
         /* --- STAGE 8: Final Celebration --- */
         function renderStage8(container) {
             container.innerHTML = `
-                <div class="space-y-5 text-center">
-                    <div class="text-6xl animate-pulse">👑</div>
+                <div class="space-y-4 text-center">
+                    <!-- Final Magic Photo Portrait -->
+                    <div class="w-24 h-24 mx-auto rounded-full overflow-hidden bg-purple-900/50 shadow-[0_0_30px_rgba(251,191,36,0.7)] border-2 border-amber-400">
+                        <img src="${userPhotoDataUrl}" alt="Принцесса" class="w-full h-full object-cover">
+                    </div>
                     <h2 class="text-2xl font-bold text-amber-300 font-magic gold-text-glow">С Днем Рождения, Моя Принцесса!</h2>
-                    <p class="text-sm text-purple-200 leading-relaxed">
+                    <p class="text-xs text-purple-200 leading-relaxed">
                         Ты прошла все волшебные испытания! Спасибо за то, что ты делаешь каждый день невероятно сказочным.
                     </p>
-                    <div class="p-4 bg-purple-950/80 rounded-2xl border border-amber-400/50 shadow-md text-left">
+                    <div class="p-3.5 bg-purple-950/80 rounded-2xl border border-amber-400/50 shadow-md text-left">
                         <p class="text-xs font-bold text-amber-300 mb-1 font-magic">🏆 Главный сюрприз дня:</p>
                         <p class="text-xs text-purple-100">${clues[8]}</p>
                     </div>
-                    <button onclick="finalConfetti()" class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-purple-600 text-white font-bold rounded-2xl shadow-[0_0_25px_rgba(251,191,36,0.5)] border border-amber-300 font-magic active:scale-95 transition">
+                    <button onclick="finalConfetti()" class="w-full py-3 bg-gradient-to-r from-amber-500 to-purple-600 text-white font-bold rounded-2xl shadow-[0_0_25px_rgba(251,191,36,0.5)] border border-amber-300 font-magic active:scale-95 transition">
                         Запустить Магический Салют ⚡
                     </button>
                 </div>
