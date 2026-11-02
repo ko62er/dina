@@ -1,0 +1,567 @@
+html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>С Днем Рождения, Моя Любовь! ❤️ Квест-приключение</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #feada6 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+        .font-handwriting {
+            font-family: 'Caveat', cursive;
+        }
+        /* Floating background hearts animation */
+        .bg-hearts span {
+            position: fixed;
+            color: rgba(255, 255, 255, 0.4);
+            animation: float 10s infinite linear;
+            z-index: 0;
+            pointer-events: none;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0.5) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translateY(-20vh) scale(1.2) rotate(360deg); opacity: 0; }
+        }
+        /* Glassmorphism styling */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 20px 40px rgba(220, 38, 38, 0.12);
+        }
+        /* Wheel of fortune style */
+        .wheel-container {
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-3 sm:p-6 text-gray-800 relative select-none">
+
+    <!-- Background Animated Hearts -->
+    <div class="bg-hearts" id="hearts-container"></div>
+
+    <!-- Music Autoplay User Prompt Overlay (Standard Browser Bypass) -->
+    <div id="audio-start-overlay" class="fixed inset-0 z-50 bg-rose-900/80 backdrop-blur-md flex flex-col items-center justify-center p-6 text-white text-center">
+        <div class="text-6xl mb-6 animate-bounce">💖</div>
+        <h1 class="text-3xl font-bold mb-3 font-handwriting">Особый подарок для тебя</h1>
+        <p class="mb-8 max-w-xs text-rose-100 text-sm leading-relaxed">Включи звук на максимум для идеальной атмосферы!</p>
+        <button id="start-app-btn" class="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold py-4 px-8 rounded-full shadow-lg transform transition active:scale-95 text-lg flex items-center gap-3">
+            <span>Начать погружение</span> 🎵
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <div id="app-container" class="w-full max-w-md glass-card rounded-3xl p-6 relative z-10 hidden my-auto min-h-[550px] flex flex-col justify-between">
+        
+        <!-- Header & Audio Controls -->
+        <div>
+            <div class="flex items-center justify-between mb-4 border-b border-rose-200/50 pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">✨</span>
+                    <h2 class="font-bold text-rose-700 text-lg tracking-wide">Birthday Quest</h2>
+                </div>
+                <button id="music-toggle-btn" class="p-2 rounded-full bg-rose-100/80 text-rose-600 hover:bg-rose-200 transition">
+                    🔊
+                </button>
+            </div>
+
+            <!-- Progress Bar -->
+            <div id="progress-container" class="mb-6 hidden">
+                <div class="flex justify-between text-xs font-semibold text-rose-600 mb-1.5">
+                    <span id="progress-text">Уровень 1 из 8</span>
+                    <span id="progress-percent">12%</span>
+                </div>
+                <div class="w-full bg-rose-100 rounded-full h-2.5 overflow-hidden">
+                    <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-2.5 rounded-full transition-all duration-500" style="width: 12%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Level Content Screen Area -->
+        <div id="screen-content" class="my-auto py-2">
+            <!-- Screen 0: Welcome -->
+            <div id="screen-welcome" class="text-center space-y-5">
+                <div class="w-24 h-24 mx-auto rounded-full bg-rose-100 flex items-center justify-center text-5xl shadow-inner border-2 border-rose-200">
+                    👑
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-rose-600 font-handwriting">С Днем Рождения, Любимая!</h1>
+                    <p class="text-gray-600 text-sm mt-2 leading-relaxed">
+                        Сегодня тебя ждет захватывающее путешествие по нашему дому! Я приготовил для тебя серии тайников и сюрпризов.
+                    </p>
+                </div>
+                <div class="bg-rose-50/80 p-4 rounded-2xl border border-rose-100 text-xs text-rose-800 leading-normal">
+                    💡 **Правила игры:** На каждом этапе ты разгадываешь загадку. Верный ответ откроет место, где прямо сейчас спрятан следующий подарок!
+                </div>
+                <button onclick="nextLevel()" class="w-full py-3.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold rounded-2xl shadow-md hover:shadow-lg transform active:scale-95 transition">
+                    Начать приключение 🚀
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer Modal Container for Clues -->
+        <div id="clue-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
+            <div class="bg-white rounded-3xl p-6 max-w-xs w-full text-center space-y-4 shadow-2xl border-4 border-pink-200 animate-bounce-short">
+                <div class="text-5xl">🎁</div>
+                <h3 class="text-xl font-bold text-rose-600">Подарок найден!</h3>
+                <p id="clue-text" class="text-gray-700 text-sm font-medium bg-rose-50 p-3 rounded-xl border border-rose-100">
+                    Подсказка с локацией загружается...
+                </p>
+                <button onclick="closeClueModal()" class="w-full py-3 bg-rose-500 text-white font-bold rounded-xl hover:bg-rose-600 transition shadow">
+                    Подарок у меня! Следующий этап ➡️
+                </button>
+            </div>
+        </div>
+
+        <!-- Helper Footer note -->
+        <div class="text-center text-[10px] text-rose-400 mt-4">
+            С любовью, специально для тебя ❤️
+        </div>
+    </div>
+
+    <script>
+        /* --------------------------------------------------
+           1. AUDIO SYNTHESIZER (Web Audio API)
+           Generates ambient soft music without external assets
+        -------------------------------------------------- */
+        let audioCtx = null;
+        let isMuted = false;
+        let isPlaying = false;
+        let synthInterval = null;
+
+        function initAudio() {
+            if (audioCtx) return;
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            audioCtx = new AudioContext();
+        }
+
+        function playRomanticChords() {
+            if (!audioCtx || isMuted) return;
+            
+            // Soft romantic chord frequencies (C major / Am ambient progression)
+            const chords = [
+                [261.63, 329.63, 392.00, 523.25], // C Major
+                [220.00, 261.63, 329.63, 440.00], // A Minor
+                [174.61, 220.00, 261.63, 349.23], // F Major
+                [196.00, 246.94, 293.66, 392.00]  // G Major
+            ];
+            
+            let chordIdx = 0;
+
+            function playChord() {
+                if (isMuted || !isPlaying) return;
+                const now = audioCtx.currentTime;
+                const currentChord = chords[chordIdx];
+                
+                currentChord.forEach(freq => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now);
+                    
+                    gain.gain.setValueAtTime(0.001, now);
+                    gain.gain.linearRampToValueAtTime(0.03, now + 1); // Soft fade in
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.8); // Fade out
+                    
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    
+                    osc.start(now);
+                    osc.stop(now + 4);
+                });
+
+                chordIdx = (chordIdx + 1) % chords.length;
+            }
+
+            playChord();
+            synthInterval = setInterval(playChord, 4000);
+        }
+
+        function toggleAudio() {
+            const btn = document.getElementById('music-toggle-btn');
+            if (isMuted) {
+                isMuted = false;
+                isPlaying = true;
+                if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+                playRomanticChords();
+                btn.textContent = '🔊';
+            } else {
+                isMuted = true;
+                isPlaying = false;
+                if (synthInterval) clearInterval(synthInterval);
+                btn.textContent = '🔇';
+            }
+        }
+
+        document.getElementById('start-app-btn').addEventListener('click', () => {
+            initAudio();
+            audioCtx.resume().then(() => {
+                isPlaying = true;
+                playRomanticChords();
+            });
+            document.getElementById('audio-start-overlay').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('hidden');
+        });
+
+        document.getElementById('music-toggle-btn').addEventListener('click', toggleAudio);
+
+        /* --------------------------------------------------
+           2. QUEST GAME LOGIC & LEVELS DATA
+        -------------------------------------------------- */
+        let currentLevel = 0;
+        const totalLevels = 8;
+
+        // EDITABLE LOCATIONS AND CLUES FOR THE BOYFRIEND!
+        const clues = {
+            1: "Ищи Подарок №1 в стиральной машине! 🧺",
+            2: "Ищи Подарок №2 в микроволновке! 🍿",
+            3: "Ищи Подарок №3 в твоей сумочке! 👜",
+            4: "Ищи Подарок №4 за зеркалом в прихожей! 🪞",
+            5: "Ищи Подарок №5 в холодильнике за соком! 🧃",
+            6: "Ищи Подарок №6 под твоей подушкой! 🛌",
+            7: "Ищи Подарок №7 в гардеробе, в кармане пальто! 🧥",
+            8: "Главный Сюрприз лежит на балконе / под столом! 🎉"
+        };
+
+        function updateProgress() {
+            if (currentLevel === 0) {
+                document.getElementById('progress-container').classList.add('hidden');
+                return;
+            }
+            document.getElementById('progress-container').classList.remove('hidden');
+            const percent = Math.round((currentLevel / totalLevels) * 100);
+            document.getElementById('progress-bar').style.width = percent + '%';
+            document.getElementById('progress-text').textContent = `Уровень ${currentLevel} из ${totalLevels}`;
+            document.getElementById('progress-percent').textContent = percent + '%';
+        }
+
+        function showClueModal(clueText) {
+            document.getElementById('clue-text').textContent = clueText;
+            document.getElementById('clue-modal').classList.remove('hidden');
+            // Trigger light confetti
+            confetti({ particleCount: 40, spread: 60, origin: { y: 0.7 } });
+        }
+
+        function closeClueModal() {
+            document.getElementById('clue-modal').classList.add('hidden');
+            nextLevel();
+        }
+
+        function nextLevel() {
+            currentLevel++;
+            updateProgress();
+            const container = document.getElementById('screen-content');
+            
+            switch(currentLevel) {
+                case 1: renderStage1(container); break;
+                case 2: renderStage2(container); break;
+                case 3: renderStage3(container); break;
+                case 4: renderStage4(container); break;
+                case 5: renderStage5(container); break;
+                case 6: renderStage6(container); break;
+                case 7: renderStage7(container); break;
+                case 8: renderStage8(container); break;
+            }
+        }
+
+        /* --- STAGE 1: Secret Answer --- */
+        function renderStage1(container) {
+            container.innerHTML = `
+                <div class="space-y-4 text-center">
+                    <span class="text-4xl">🔐</span>
+                    <h3 class="text-lg font-bold text-rose-600">Уровень 1: Секретный вопрос</h3>
+                    <p class="text-sm text-gray-600">Вспомни наше важное событие! Какое слово/дата наше самое любимое?</p>
+                    <div class="bg-rose-50 p-3 rounded-xl border border-rose-100 text-xs text-rose-500 italic">
+                        Подсказка: Введи слово "любовь" (или твой вариант пароля)
+                    </div>
+                    <input type="text" id="pass-input" placeholder="Введите ответ..." class="w-full text-center py-3 px-4 rounded-xl border border-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-400">
+                    <button onclick="checkStage1()" class="w-full py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold rounded-xl shadow">
+                        Проверить код ✨
+                    </button>
+                    <p id="stage1-error" class="text-xs text-red-500 hidden">Неверно, попробуй еще раз! ❤️</p>
+                </div>
+            `;
+        }
+        function checkStage1() {
+            const val = document.getElementById('pass-input').value.trim().toLowerCase();
+            // You can change 'любовь' to your special word/date!
+            if (val === 'любовь' || val === 'love' || val !== '') {
+                showClueModal(clues[1]);
+            } else {
+                document.getElementById('stage1-error').classList.remove('hidden');
+            }
+        }
+
+        /* --- STAGE 2: Scratch Card --- */
+        function renderStage2(container) {
+            container.innerHTML = `
+                <div class="space-y-4 text-center">
+                    <span class="text-4xl">🎨</span>
+                    <h3 class="text-lg font-bold text-rose-600">Уровень 2: Стирайка-Сюрприз</h3>
+                    <p class="text-sm text-gray-600">Потри пальцем или мышкой защитный слой ниже, чтобы проявить тайник!</p>
+                    <div class="relative w-64 h-32 mx-auto rounded-xl overflow-hidden border-2 border-rose-300 shadow-inner flex items-center justify-center bg-rose-100">
+                        <div class="text-center p-2 text-rose-700 font-bold text-sm">
+                            🎁 Кодовый ключ: 777<br>
+                            <span class="text-xs font-normal">Жми кнопку ниже!</span>
+                        </div>
+                        <canvas id="scratch-canvas" class="absolute inset-0 w-full h-full cursor-pointer"></canvas>
+                    </div>
+                    <button onclick="showClueModal(clues[2])" class="w-full py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold rounded-xl shadow">
+                        Я всё увидела! ➡️
+                    </button>
+                </div>
+            `;
+            setTimeout(initScratchCard, 50);
+        }
+        function initScratchCard() {
+            const canvas = document.getElementById('scratch-canvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            ctx.fillStyle = '#f472b6';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '16px Montserrat';
+            ctx.textAlign = 'center';
+            ctx.fillText('Стри меня пальчиком ✨', canvas.width/2, canvas.height/2 + 5);
+
+            let isDrawing = false;
+            function scratch(e) {
+                if(!isDrawing) return;
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+                const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.arc(x, y, 20, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            canvas.addEventListener('mousedown', () => isDrawing = true);
+            canvas.addEventListener('mouseup', () => isDrawing = false);
+            canvas.addEventListener('mousemove', scratch);
+            canvas.addEventListener('touchstart', () => isDrawing = true);
+            canvas.addEventListener('touchend', () => isDrawing = false);
+            canvas.addEventListener('touchmove', scratch);
+        }
+
+        /* --- STAGE 3: Quiz Trivia --- */
+        function renderStage3(container) {
+            container.innerHTML = `
+                <div class="space-y-4 text-center">
+                    <span class="text-4xl">❓</span>
+                    <h3 class="text-lg font-bold text-rose-600">Уровень 3: Романтичный викториум</h3>
+                    <p class="text-sm text-gray-600">Что из этого делает меня самым счастливым человеком на свете?</p>
+                    <div class="space-y-2 text-left">
+                        <button onclick="answerQuiz(false)" class="w-full p-3 bg-rose-50 hover:bg-rose-100 rounded-xl border border-rose-200 text-xs text-rose-800 transition">A) Когда выигрывает моя футбольная команда</button>
+                        <button onclick="answerQuiz(true)" class="w-full p-3 bg-rose-50 hover:bg-rose-100 rounded-xl border border-rose-200 text-xs text-rose-800 transition">B) Твоя улыбка и твои объятия каждый день ❤️</button>
+                        <button onclick="answerQuiz(false)" class="w-full p-3 bg-rose-50 hover:bg-rose-100 rounded-xl border border-rose-200 text-xs text-rose-800 transition">C) Вкусная пицца по пятницам</button>
+                    </div>
+                </div>
+            `;
+        }
+        function answerQuiz(isCorrect) {
+            if(isCorrect) {
+                showClueModal(clues[3]);
+            } else {
+                alert("Ну почти! Но есть кое-что намного важнее 😉 Попробуй еще раз!");
+            }
+        }
+
+        /* --- STAGE 4: Interactive Puzzle --- */
+        let puzzleState = [1, 2, 3, 4, 0, 5, 6, 7, 8]; // 0 is empty
+        function renderStage4(container) {
+            container.innerHTML = `
+                <div class="space-y-3 text-center">
+                    <span class="text-4xl">🧩</span>
+                    <h3 class="text-lg font-bold text-rose-600">Уровень 4: Мини-пазл</h3>
+                    <p class="text-xs text-gray-600">Собери числа по порядку от 1 до 8!</p>
+                    <div id="puzzle-grid" class="grid grid-cols-3 gap-1.5 w-48 h-48 mx-auto p-2 bg-rose-200/60 rounded-xl shadow-inner">
+                    </div>
+                    <button onclick="showClueModal(clues[4])" class="w-full py-2.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold rounded-xl text-xs shadow">
+                        Пропустить / Готово ➡️
+                    </button>
+                </div>
+            `;
+            renderPuzzleGrid();
+        }
+        function renderPuzzleGrid() {
+            const grid = document.getElementById('puzzle-grid');
+            if(!grid) return;
+            grid.innerHTML = '';
+            puzzleState.forEach((val, idx) => {
+                const tile = document.createElement('div');
+                tile.className = `flex items-center justify-center font-bold text-lg rounded-lg ${val === 0 ? 'bg-transparent' : 'bg-white text-rose-600 shadow cursor-pointer active:scale-95'}`;
+                tile.textContent = val === 0 ? '' : val;
+                tile.onclick = () => movePuzzleTile(idx);
+                grid.appendChild(tile);
+            });
+        }
+        function movePuzzleTile(idx) {
+            const emptyIdx = puzzleState.indexOf(0);
+            const validMoves = [idx-1, idx+1, idx-3, idx+3];
+            if(validMoves.includes(emptyIdx)) {
+                puzzleState[emptyIdx] = puzzleState[idx];
+                puzzleState[idx] = 0;
+                renderPuzzleGrid();
+                if(puzzleState.join('') === '123456780') {
+                    setTimeout(() => showClueModal(clues[4]), 300);
+                }
+            }
+        }
+
+        /* --- STAGE 5: Wheel of Fortune --- */
+        function renderStage5(container) {
+            container.innerHTML = `
+                <div class="space-y-4 text-center">
+                    <span class="text-4xl">🎡</span>
+                    <h3 class="text-lg font-bold text-rose-600">Уровень 5: Колесо Желаний</h3>
+                    <p class="text-xs text-gray-600">Испытай удачу и крути рулетку для получения подарка!</p>
+                    <div class="relative w-44 h-44 mx-auto my-2">
+                        <div id="wheel" class="w-full h-full rounded-full border-4 border-white shadow-lg bg-gradient-to-r from-pink-400 via-rose-400 to-red-400 wheel-container flex items-center justify-center text-white font-bold text-xs">
+                            🎁 Секретный подарок
+                        </div>
+                        <div class="absolute -top-2 left-1/2 -translate-x-1/2 text-2xl">▼</div>
+                    </div>
+                    <button id="spin-btn" onclick="spinWheel()" class="w-full py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold rounded-xl shadow">
+                        Крутить колесо! 🎯
+                    </button>
+                </div>
+            `;
+        }
+        function spinWheel() {
+            const wheel = document.getElementById('wheel');
+            const btn = document.getElementById('spin-btn');
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+            const randomRot = 1440 + Math.floor(Math.random() * 360);
+            wheel.style.transform = `rotate(${randomRot}deg)`;
+            setTimeout(() => {
+                showClueModal(clues[5]);
+            }, 4200);
+        }
+
+        /* --- STAGE 6: Secret Decoder --- */
+        function renderStage6(container) {
+            container.innerHTML = `
+                <div class="space-y-4 text-center">
+                    <span class="text-4xl">🕵️‍♀️</span>
+                    <h3 class="text-lg font-bold text-rose-600">Уровень 6: Дешифратор</h3>
+                    <p class="text-xs text-gray-600">Расшифруй фразочку-пароль:</p>
+                    <div class="bg-rose-100 p-3 rounded-xl font-mono text-sm tracking-widest text-rose-800">
+                        "Т-Ы  М-О-Я  К-Р-А-С-О-Т-А"
+                    </div>
+                    <button onclick="showClueModal(clues[6])" class="w-full py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold rounded-xl shadow">
+                        Открыть тайник 🔓
+                    </button>
+                </div>
+            `;
+        }
+
+        /* --- STAGE 7: Digital Safe --- */
+        let pin = "";
+        function renderStage7(container) {
+            container.innerHTML = `
+                <div class="space-y-3 text-center">
+                    <span class="text-4xl">🔒</span>
+                    <h3 class="text-lg font-bold text-rose-600">Уровень 7: Цифровой Сейф</h3>
+                    <p class="text-xs text-gray-600">Введи любимое число (например: 2026)</p>
+                    <div id="pin-display" class="w-36 h-10 mx-auto bg-gray-900 text-green-400 font-mono text-xl flex items-center justify-center rounded-lg tracking-widest border-2 border-gray-700">
+                        ____
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 w-48 mx-auto">
+                        ${[1,2,3,4,5,6,7,8,9].map(n => `<button onclick="pressPin('${n}')" class="p-2.5 bg-rose-100 font-bold text-rose-700 rounded-lg active:bg-rose-200">${n}</button>`).join('')}
+                        <button onclick="clearPin()" class="p-2.5 bg-red-100 font-bold text-red-600 rounded-lg text-xs">C</button>
+                        <button onclick="pressPin('0')" class="p-2.5 bg-rose-100 font-bold text-rose-700 rounded-lg">0</button>
+                        <button onclick="checkPin()" class="p-2.5 bg-green-100 font-bold text-green-600 rounded-lg text-xs">ОК</button>
+                    </div>
+                </div>
+            `;
+        }
+        function pressPin(num) {
+            if(pin.length < 4) {
+                pin += num;
+                document.getElementById('pin-display').textContent = pin.padEnd(4, '_');
+            }
+        }
+        function clearPin() {
+            pin = "";
+            document.getElementById('pin-display').textContent = '____';
+        }
+        function checkPin() {
+            if(pin.length > 0) {
+                showClueModal(clues[7]);
+            }
+        }
+
+        /* --- STAGE 8: Final Celebration --- */
+        function renderStage8(container) {
+            container.innerHTML = `
+                <div class="space-y-5 text-center">
+                    <div class="text-6xl animate-bounce">🎉</div>
+                    <h2 class="text-2xl font-bold text-rose-600 font-handwriting">Ты прошла весь квест!</h2>
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        Моя любимая, с днем рождения! Спасибо за то, что ты делаешь каждый день особенным. 
+                    </p>
+                    <div class="p-4 bg-gradient-to-r from-rose-100 to-pink-100 rounded-2xl border border-rose-200 shadow-sm text-left">
+                        <p class="text-xs font-bold text-rose-700 mb-1">🏆 Главный сюрприз дня:</p>
+                        <p class="text-xs text-rose-900">${clues[8]}</p>
+                    </div>
+                    <button onclick="finalConfetti()" class="w-full py-3.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold rounded-2xl shadow-lg active:scale-95 transition">
+                        Запустить Салют Сердец 💖
+                    </button>
+                </div>
+            `;
+            finalConfetti();
+        }
+
+        function finalConfetti() {
+            const count = 200;
+            const defaults = { origin: { y: 0.7 } };
+
+            function fire(particleRatio, opts) {
+                confetti(Object.assign({}, defaults, opts, {
+                    particleCount: Math.floor(count * particleRatio)
+                }));
+            }
+
+            fire(0.25, { spread: 26, startVelocity: 55 });
+            fire(0.2, { spread: 60 });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+            fire(0.1, { spread: 120, startVelocity: 45 });
+        }
+
+        // Generate dynamic background hearts
+        (function createHearts() {
+            const container = document.getElementById('hearts-container');
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('span');
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                container.appendChild(heart);
+            }
+        })();
+    </script>
+</body>
+</html>
