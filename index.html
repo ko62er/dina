@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>С Днём Рождения, Дина! ⚡ Магический Квест</title>
+    <title>С Днём Рождения, Динара! ⚡ Магический Квест</title>
     
     <!-- Tailwind CSS для адаптивной вёрстки -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -120,7 +120,7 @@
             <div class="flex items-center justify-center gap-2 border-b border-amber-400/30 pb-3 mb-4">
                 <span class="text-xl">⚡</span>
                 <span class="font-magic text-amber-300 font-bold tracking-widest text-sm sm:text-base gold-glow">
-                    HOGWARTS QUEST • DINA
+                    HOGWARTS QUEST • DINARA
                 </span>
                 <span class="text-xl">🦉</span>
             </div>
@@ -142,22 +142,22 @@
             
             <!-- СТАРТОВЫЙ ЭКРАН (Экран 0) -->
             <div class="text-center space-y-5">
-                <!-- Портрет Дины (Dina.jpg) в золотой рамке -->
+                <!-- Портрет Динары (Dina.jpg) в золотой рамке -->
                 <div class="w-32 h-32 mx-auto portrait-frame">
                     <div class="w-full h-full rounded-full overflow-hidden bg-purple-950 flex items-center justify-center relative">
-                        <img src="Dina.jpg" alt="Дина"
+                        <img src="Dina.jpg" alt="Динара"
                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                             class="w-full h-full object-cover">
                         <div style="display: none;" class="w-full h-full flex-col items-center justify-center bg-gradient-to-b from-purple-900 to-indigo-950 text-amber-300">
                             <span class="text-4xl">👑</span>
-                            <span class="text-[11px] font-magic mt-1">Дина</span>
+                            <span class="text-[11px] font-magic mt-1">Динара</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="space-y-2">
                     <h1 class="text-2xl sm:text-3xl font-bold text-amber-300 font-magic gold-glow leading-tight">
-                        С Днём Рождения, Дина!
+                        С Днём Рождения, Динара!
                     </h1>
                     <p class="text-xs sm:text-sm text-purple-100/90 leading-relaxed px-1">
                         Сова принесла особое письмо из Хогвартса! Наш дом полон магии и тайников. Пройди <strong class="text-amber-300">5 волшебных испытаний</strong>, чтобы отыскать все свои подарки!
@@ -178,7 +178,7 @@
 
         <!-- Нижний колонтитул -->
         <footer class="text-center text-[11px] text-amber-300/60 pt-4 mt-3 border-t border-amber-400/20 font-magic">
-            Сделано с любовью специально для Дины 🪄
+            Сделано с любовью специально для Динары 🪄
         </footer>
     </main>
 
@@ -343,7 +343,7 @@
                             Нужна подсказка совы? 🦉
                         </button>
                         <p id="stage1-hint" class="hidden mt-2 text-xs bg-purple-950/80 border border-amber-400/30 rounded-xl p-2.5 text-amber-200">
-                            Попробуй ввести: <strong>Динуля</strong>, <strong>Дина</strong>, <strong>Любовь</strong> или код <strong>1234</strong> ✨
+                            Попробуй ввести: <strong>Динара</strong>, <strong>Любовь</strong> или код <strong>1234</strong> ✨
                         </p>
                     </div>
                 </div>
@@ -356,7 +356,7 @@
 
         function checkStage1() {
             const rawVal = document.getElementById('stage1-input').value.trim().toLowerCase();
-            const validAnswers = ['динуля', 'дина', 'любовь', '1234', 'алохомора'];
+            const validAnswers = ['динара', 'динуля', 'дина', 'любовь', '1234', 'алохомора'];
             if (validAnswers.includes(rawVal)) {
                 openGiftModal(1);
             } else {
@@ -512,7 +512,7 @@
                 q: "2/3. Что сегодня празднует весь волшебный мир?",
                 options: [
                     { text: "Финал Кубка мира по квиддичу 🏆", correct: false },
-                    { text: "День Рождения прекрасной Дины! 🎂✨", correct: true },
+                    { text: "День Рождения прекрасной Динары! 🎂✨", correct: true },
                     { text: "Открытие Тайной комнаты 🐍", correct: false }
                 ]
             },
@@ -631,7 +631,7 @@
         }
 
         /* =========================================================================
-           ЭТАП 5: ФИНАЛ — ГЛАВНЫЙ СЮРПРИЗ ДЛЯ ДИНЫ
+           ЭТАП 5: ФИНАЛ — ГЛАВНЫЙ СЮРПРИЗ ДЛЯ ДИНАРЫ
         ========================================================================= */
         function renderStage5(container) {
             container.innerHTML = `
@@ -639,12 +639,12 @@
                     <!-- Королевская золотая рамка с фото Dina.jpg -->
                     <div class="w-28 h-28 mx-auto portrait-frame">
                         <div class="w-full h-full rounded-full overflow-hidden bg-purple-950 flex items-center justify-center relative">
-                            <img src="Dina.jpg" alt="Дина"
+                            <img src="Dina.jpg" alt="Динара"
                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                                 class="w-full h-full object-cover">
                             <div style="display: none;" class="w-full h-full flex-col items-center justify-center bg-gradient-to-b from-purple-900 to-indigo-950 text-amber-300">
                                 <span class="text-4xl">👑</span>
-                                <span class="text-[11px] font-magic mt-1">Дина</span>
+                                <span class="text-[11px] font-magic mt-1">Динара</span>
                             </div>
                         </div>
                     </div>
@@ -654,7 +654,7 @@
                             ✨ Все 5 испытаний пройдены! ✨
                         </span>
                         <h2 class="text-2xl font-bold text-amber-300 font-magic gold-glow leading-snug">
-                            С Днём Рождения, Любимая Дина!
+                            С Днём Рождения, Любимая Динара!
                         </h2>
                     </div>
 
