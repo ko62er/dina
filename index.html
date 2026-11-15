@@ -13,10 +13,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* Базовые стили и магическая палитра */
+        /* Базовые стили и ночная магическая палитра Хогвартса */
         body {
             font-family: 'Montserrat', sans-serif;
-            background: radial-gradient(circle at top, #1f123d 0%, #0d071e 65%, #05020c 100%);
+            background: radial-gradient(circle at top, #17153b 0%, #090a1f 65%, #03040c 100%);
             min-height: 100vh;
             color: #f3e8ff;
             overflow-x: hidden;
@@ -30,7 +30,7 @@
         /* Анимация парящих золотых искр и звёзд на фоне */
         .magic-particles span {
             position: fixed;
-            color: rgba(251, 191, 36, 0.7);
+            color: rgba(251, 191, 36, 0.75);
             animation: floatUp 14s infinite linear;
             z-index: 0;
             pointer-events: none;
@@ -56,19 +56,19 @@
 
         /* Стеклянная карточка с золотым свечением */
         .hogwarts-card {
-            background: rgba(22, 14, 43, 0.82);
+            background: rgba(16, 17, 44, 0.85);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
             border: 1.5px solid rgba(251, 191, 36, 0.45);
-            box-shadow: 0 0 40px rgba(139, 92, 246, 0.25), inset 0 0 20px rgba(251, 191, 36, 0.12);
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.25), inset 0 0 20px rgba(251, 191, 36, 0.12);
         }
 
-        /* Орнаментальная золотая рамка для портрета Дины */
+        /* Орнаментальная золотая рамка для портрета Динары */
         .portrait-frame {
             position: relative;
             padding: 5px;
             border-radius: 9999px;
-            background: linear-gradient(135deg, #fde68a 0%, #d97706 45%, #7e22ce 75%, #fbbf24 100%);
+            background: linear-gradient(135deg, #fde68a 0%, #d97706 45%, #4f46e5 75%, #fbbf24 100%);
             box-shadow: 0 0 28px rgba(251, 191, 36, 0.65);
         }
 
@@ -76,7 +76,7 @@
             text-shadow: 0 0 14px rgba(251, 191, 36, 0.65);
         }
 
-        /* Плавное вращение Колеса Фортуны */
+        /* Плавное вращение Колеса Даров */
         .wheel-spinner {
             transition: transform 4.2s cubic-bezier(0.15, 0.85, 0.18, 1);
         }
@@ -100,22 +100,22 @@
 </head>
 <body class="flex items-center justify-center p-3 sm:p-6 relative select-none">
 
-    <!-- Аудиоплеер, подключенный к HPM.mp3 на GitHub -->
-    <audio id="bgMusic" src="HPM.mp3" loop preload="auto"></audio>
+    <!-- Аудиоплеер, подключенный к HPM.mp3 в репозитории GitHub -->
+    <audio id="bgMusic" loop src="HPM.mp3" preload="auto"></audio>
 
     <!-- Контейнер парящих магических звёздочек -->
     <div id="particles-container" class="magic-particles"></div>
 
-    <!-- Плавающая кнопка управления звуком в правом верхнем углу -->
+    <!-- Кнопка управления звуком в правом верхнем углу экрана -->
     <button id="mute-btn" onclick="toggleMusic()" aria-label="Включить или выключить звук"
-        class="fixed top-4 right-4 z-40 w-11 h-11 rounded-full bg-purple-950/85 border border-amber-400/60 text-amber-300 flex items-center justify-center text-lg shadow-[0_0_15px_rgba(251,191,36,0.35)] hover:bg-purple-900 active:scale-90 transition hidden">
+        class="fixed top-4 right-4 z-40 w-11 h-11 rounded-full bg-indigo-950/90 border border-amber-400/60 text-amber-300 flex items-center justify-center text-lg shadow-[0_0_15px_rgba(251,191,36,0.35)] hover:bg-indigo-900 active:scale-90 transition hidden">
         🔊
     </button>
 
     <!-- Главный игровой контейнер -->
-    <main class="w-full max-w-md hogwarts-card rounded-3xl p-6 sm:p-7 relative z-10 min-h-[540px] flex flex-col justify-between">
+    <main class="w-full max-w-md hogwarts-card rounded-3xl p-6 sm:p-7 relative z-10 min-h-[550px] flex flex-col justify-between">
         
-        <!-- Верхняя шапка и шкала прогресса (5 этапов) -->
+        <!-- Верхняя шапка и шкала прогресса (6 этапов) -->
         <header>
             <div class="flex items-center justify-center gap-2 border-b border-amber-400/30 pb-3 mb-4">
                 <span class="text-xl">⚡</span>
@@ -125,14 +125,14 @@
                 <span class="text-xl">🦉</span>
             </div>
 
-            <!-- Прогресс-бар (показывается начиная с 1 этапа) -->
+            <!-- Прогресс-бар (показывается начиная с 1 этапа из 6) -->
             <div id="progress-wrapper" class="hidden mb-5">
                 <div class="flex justify-between items-center text-xs font-semibold text-amber-200 mb-1.5">
-                    <span id="stage-label" class="font-magic tracking-wide">Этап 1 из 5</span>
-                    <span id="stage-percent">20%</span>
+                    <span id="stage-label" class="font-magic tracking-wide">Этап 1 из 6</span>
+                    <span id="stage-percent">17%</span>
                 </div>
-                <div class="w-full h-2.5 bg-purple-950/90 rounded-full overflow-hidden border border-amber-400/30 p-0.5">
-                    <div id="progress-fill" class="h-full bg-gradient-to-r from-amber-500 via-yellow-300 to-amber-500 rounded-full transition-all duration-500" style="width: 20%"></div>
+                <div class="w-full h-2.5 bg-indigo-950/90 rounded-full overflow-hidden border border-amber-400/30 p-0.5">
+                    <div id="progress-fill" class="h-full bg-gradient-to-r from-amber-500 via-yellow-300 to-amber-500 rounded-full transition-all duration-500" style="width: 17%"></div>
                 </div>
             </div>
         </header>
@@ -144,11 +144,11 @@
             <div class="text-center space-y-5">
                 <!-- Портрет Динары (Dina.jpg) в золотой рамке -->
                 <div class="w-32 h-32 mx-auto portrait-frame">
-                    <div class="w-full h-full rounded-full overflow-hidden bg-purple-950 flex items-center justify-center relative">
+                    <div class="w-full h-full rounded-full overflow-hidden bg-indigo-950 flex items-center justify-center relative">
                         <img src="Dina.jpg" alt="Динара"
                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                             class="w-full h-full object-cover">
-                        <div style="display: none;" class="w-full h-full flex-col items-center justify-center bg-gradient-to-b from-purple-900 to-indigo-950 text-amber-300">
+                        <div style="display: none;" class="w-full h-full flex-col items-center justify-center bg-gradient-to-b from-indigo-900 to-slate-950 text-amber-300">
                             <span class="text-4xl">👑</span>
                             <span class="text-[11px] font-magic mt-1">Динара</span>
                         </div>
@@ -159,12 +159,12 @@
                     <h1 class="text-2xl sm:text-3xl font-bold text-amber-300 font-magic gold-glow leading-tight">
                         С Днём Рождения, Динара!
                     </h1>
-                    <p class="text-xs sm:text-sm text-purple-100/90 leading-relaxed px-1">
-                        Сова принесла особое письмо из Хогвартса! Наш дом полон магии и тайников. Пройди <strong class="text-amber-300">5 волшебных испытаний</strong>, чтобы отыскать все свои подарки!
+                    <p class="text-xs sm:text-sm text-indigo-100/90 leading-relaxed px-1">
+                        Сова принесла особое письмо из Хогвартса! Наш дом полон магии и тайников. Пройди <strong class="text-amber-300">6 волшебных испытаний</strong>, чтобы отыскать все свои подарки!
                     </p>
                 </div>
 
-                <div class="bg-purple-950/75 border border-amber-400/30 rounded-2xl p-3.5 text-xs text-amber-200/95 leading-relaxed">
+                <div class="bg-indigo-950/80 border border-amber-400/30 rounded-2xl p-3.5 text-xs text-amber-200/95 leading-relaxed">
                     🔊 Включи звук на телефоне — при нажатии на кнопку заиграет мелодия волшебного мира!
                 </div>
 
@@ -182,23 +182,23 @@
         </footer>
     </main>
 
-    <!-- МОДАЛЬНОЕ ОКНО ПОДСКАЗКИ (Открывается после прохождения этапов 1–4) -->
+    <!-- МОДАЛЬНОЕ ОКНО ПОДСКАЗКИ (Открывается после прохождения этапов 1–5) -->
     <div id="clue-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center p-4">
         <div class="hogwarts-card rounded-3xl p-6 max-w-sm w-full text-center space-y-5 border-2 border-amber-400 fade-in">
             <div class="text-5xl animate-bounce">🎁</div>
             <div class="space-y-1">
                 <span id="modal-gift-badge" class="inline-block px-3 py-1 rounded-full bg-amber-400/20 border border-amber-400/40 text-amber-300 text-xs font-bold font-magic">
-                    Подарок №1 разблокирован!
+                    Подарок №1 из 6 разблокирован!
                 </span>
                 <h3 class="text-xl font-bold text-amber-300 font-magic gold-glow pt-1">Тайник Открыт!</h3>
             </div>
             
-            <div class="bg-purple-950/90 border border-amber-400/40 rounded-2xl p-4 text-sm sm:text-base text-purple-100 font-medium leading-relaxed shadow-inner">
+            <div class="bg-indigo-950/90 border border-amber-400/40 rounded-2xl p-4 text-sm sm:text-base text-indigo-100 font-medium leading-relaxed shadow-inner">
                 <p id="clue-modal-text">Загрузка подсказки...</p>
             </div>
 
             <button onclick="proceedFromModal()"
-                class="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-amber-500 to-purple-600 text-white font-bold text-sm sm:text-base border border-amber-300 shadow-lg hover:brightness-110 active:scale-95 transition">
+                class="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-amber-500 to-indigo-600 text-white font-bold text-sm sm:text-base border border-amber-300 shadow-lg hover:brightness-110 active:scale-95 transition">
                 Подарок найден! Дальше ➡️
             </button>
         </div>
@@ -210,14 +210,15 @@
 
     <script>
         /* =========================================================================
-           1. ПОДСКАЗКИ ДЛЯ 5 ПОДАРКОВ (ОБНОВЛЕНЫ 1-Й И 5-Й ТАЙНИКИ)
+           1. ПОДСКАЗКИ ДЛЯ 6 ПОДАРКОВ
         ========================================================================= */
         const giftClues = [
-            "Первый магический артефакт спрятан там, где вода кружится в волшебном вихре... Загляни в стиральную машинку! 🫧✨",
-            "Тайник №2: в шкафу на верхней полке 👗",
-            "Тайник №3: на кухне в микроволновке ☕",
-            "Тайник №4: в прихожей за зеркалом 🪞",
-            "Главное сокровище дня рождения ждёт тебя там, где рождается магия красоты... Загляни под косметический столик! 💄✨🎁"
+            "Тайник №1 ждёт тебя внутри стиральной машинки! Загляни в барабан 🌀✨",
+            "Тайник №2 спрятан в ванной на зеркальной полке! ✨🧴",
+            "Тайник №3 ждёт тебя на кухне в микроволновке! ☕🪄",
+            "Тайник №4 спрятан в шкафу с одеждой! Поищи среди полок 👗✨",
+            "Тайник №5 ждёт тебя под косметическим столиком! 💄✨",
+            "Главный финальный сюрприз №6 ждёт тебя прямо на холодильнике! Посмотри наверх ❄️🎁✨"
         ];
 
         /* =========================================================================
@@ -227,7 +228,7 @@
         const muteBtn = document.getElementById('mute-btn');
 
         function startQuest() {
-            // Запускаем фоновую музыку HPM.mp3 при первом клике
+            // Запускаем фоновую музыку HPM.mp3 при нажатии кнопки старта
             if (bgMusic) {
                 bgMusic.volume = 0.85;
                 bgMusic.play().catch(err => {
@@ -250,10 +251,10 @@
         }
 
         /* =========================================================================
-           3. НАВИГАЦИЯ ПО 5 ЭТАПАМ И МОДАЛЬНОЕ ОКНО
+           3. НАВИГАЦИЯ ПО 6 ЭТАПАМ И МОДАЛЬНОЕ ОКНО
         ========================================================================= */
         let currentStage = 0;
-        const totalStages = 5;
+        const totalStages = 6;
 
         function showToast(message) {
             const toast = document.getElementById('toast-box');
@@ -262,7 +263,7 @@
             clearTimeout(window.toastTimer);
             window.toastTimer = setTimeout(() => {
                 toast.classList.add('hidden');
-            }, 3000);
+            }, 3200);
         }
 
         function updateProgressBar(stage) {
@@ -279,17 +280,16 @@
         }
 
         function openGiftModal(stageIndex) {
-            // stageIndex от 1 до 4
-            document.getElementById('modal-gift-badge').textContent = `Подарок №${stageIndex} из 5 разблокирован!`;
+            // stageIndex от 1 до 5
+            document.getElementById('modal-gift-badge').textContent = `Подарок №${stageIndex} из ${totalStages} разблокирован!`;
             document.getElementById('clue-modal-text').textContent = giftClues[stageIndex - 1];
             document.getElementById('clue-modal').classList.remove('hidden');
             
-            // Небольшой праздничный салют при открытии тайника
             confetti({
-                particleCount: 65,
+                particleCount: 70,
                 spread: 75,
                 origin: { y: 0.65 },
-                colors: ['#fbbf24', '#a855f7', '#f43f5e']
+                colors: ['#fbbf24', '#6366f1', '#f43f5e']
             });
         }
 
@@ -312,10 +312,11 @@
             else if (currentStage === 3) renderStage3(area);
             else if (currentStage === 4) renderStage4(area);
             else if (currentStage === 5) renderStage5(area);
+            else if (currentStage === 6) renderStage6(area);
         }
 
         /* =========================================================================
-           ЭТАП 1: ЗАКЛИНАНИЕ «АЛОХОМОРА» (Секретное слово)
+           ЭТАП 1: ЗАКЛИНАНИЕ «АЛОХОМОРА» -> Тайник №1 (Стиральная машинка)
         ========================================================================= */
         function renderStage1(container) {
             container.innerHTML = `
@@ -324,16 +325,16 @@
                     <h2 class="text-xl font-bold text-amber-300 font-magic gold-glow">
                         Этап 1: Заклинание «Алохомора»
                     </h2>
-                    <p class="text-xs sm:text-sm text-purple-100 leading-relaxed">
-                        Первая дверь заколдована! Чтобы открыть её, произнеси главное волшебное слово этого праздника или имя самой прекрасной именинницы:
+                    <p class="text-xs sm:text-sm text-indigo-100 leading-relaxed">
+                        Первая дверь заколдована! Чтобы открыть её, произнеси главное волшебное слово этого праздника или имя прекрасной именинницы:
                     </p>
                     
                     <input type="text" id="stage1-input" placeholder="Введи волшебное слово..."
                         onkeypress="if(event.key === 'Enter') checkStage1()"
-                        class="w-full py-3.5 px-4 rounded-2xl bg-purple-950/90 border border-amber-400/50 text-center text-amber-200 placeholder-purple-400/60 focus:outline-none focus:ring-2 focus:ring-amber-400 text-base">
+                        class="w-full py-3.5 px-4 rounded-2xl bg-indigo-950/90 border border-amber-400/50 text-center text-amber-200 placeholder-indigo-400/60 focus:outline-none focus:ring-2 focus:ring-amber-400 text-base">
 
                     <button onclick="checkStage1()"
-                        class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-purple-600 text-white font-bold text-base border border-amber-300 shadow-lg active:scale-95 transition">
+                        class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-indigo-600 text-white font-bold text-base border border-amber-300 shadow-lg active:scale-95 transition">
                         Открыть замок ✨
                     </button>
 
@@ -341,8 +342,8 @@
                         <button onclick="toggleHint1()" class="text-xs text-amber-300/80 underline hover:text-amber-200 transition py-1">
                             Нужна подсказка совы? 🦉
                         </button>
-                        <p id="stage1-hint" class="hidden mt-2 text-xs bg-purple-950/80 border border-amber-400/30 rounded-xl p-2.5 text-amber-200">
-                            Попробуй ввести: <strong>Динара</strong>, <strong>Любовь</strong> или код <strong>1234</strong> ✨
+                        <p id="stage1-hint" class="hidden mt-2 text-xs bg-indigo-950/85 border border-amber-400/30 rounded-xl p-2.5 text-amber-200">
+                            Попробуй ввести: <strong>Динара</strong>, <strong>Любовь</strong> или <strong>Алохомора</strong> ✨
                         </p>
                     </div>
                 </div>
@@ -364,7 +365,7 @@
         }
 
         /* =========================================================================
-           ЭТАП 2: КАРТА МАРОДЁРОВ (Интерактивная скретч-карта)
+           ЭТАП 2: КАРТА МАРОДЁРОВ -> Тайник №2 (Ванная, зеркальная полка)
         ========================================================================= */
         let scratchCompleted = false;
 
@@ -376,17 +377,17 @@
                     <h2 class="text-xl font-bold text-amber-300 font-magic gold-glow">
                         Этап 2: Карта Мародёров
                     </h2>
-                    <p class="text-xs sm:text-sm text-purple-100 leading-relaxed">
+                    <p class="text-xs sm:text-sm text-indigo-100 leading-relaxed">
                         «Торжественно клянусь, что замышляю только шалость!»<br>
-                        Сотри золотой магический туман пальцем, чтобы проявить тайник:
+                        Сотри золотой магический туман пальцем, чтобы проявить второй тайник:
                     </p>
 
-                    <div class="relative w-full max-w-[290px] h-40 mx-auto rounded-2xl overflow-hidden border-2 border-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.35)] bg-purple-950 flex items-center justify-center">
+                    <div class="relative w-full max-w-[290px] h-40 mx-auto rounded-2xl overflow-hidden border-2 border-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.35)] bg-indigo-950 flex items-center justify-center">
                         <!-- Скрытый текст под скретч-слоем -->
                         <div class="p-4 text-center">
                             <span class="text-2xl block mb-1">🗝️</span>
                             <p class="text-amber-300 font-bold text-sm font-magic">Тайник №2 проявлен!</p>
-                            <p class="text-[11px] text-purple-200 mt-1">Нажми кнопку ниже, чтобы прочитать подсказку</p>
+                            <p class="text-[11px] text-indigo-200 mt-1">Нажми кнопку ниже, чтобы узнать место</p>
                         </div>
                         <!-- Холст для стирания -->
                         <canvas id="marauder-canvas" class="absolute inset-0 w-full h-full cursor-pointer touch-none"></canvas>
@@ -397,8 +398,8 @@
                     </div>
 
                     <button id="stage2-next-btn" onclick="openGiftModal(2)" disabled
-                        class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-purple-600 text-white font-bold text-base border border-amber-300 shadow-lg opacity-40 cursor-not-allowed transition">
-                        Подарок найден! Дальше ➡️
+                        class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-indigo-600 text-white font-bold text-base border border-amber-300 shadow-lg opacity-40 cursor-not-allowed transition">
+                        Открыть подсказку №2 ➡️
                     </button>
                 </div>
             `;
@@ -422,7 +423,6 @@
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Декоративный узор и текст поверх фольги
             ctx.fillStyle = '#fef3c7';
             ctx.font = 'bold 14px Montserrat, sans-serif';
             ctx.textAlign = 'center';
@@ -496,7 +496,7 @@
         }
 
         /* =========================================================================
-           ЭТАП 3: ИСПЫТАНИЕ ХОГВАРТСА (Мини-викторина из 3 вопросов)
+           ЭТАП 3: ИСПЫТАНИЕ ХОГВАРТСА -> Тайник №3 (На кухне в микроволновке)
         ========================================================================= */
         const hogwartsQuestions = [
             {
@@ -516,7 +516,7 @@
                 ]
             },
             {
-                q: "3/3. Какое главное пожелание для тебя в этот день?",
+                q: "3/3. Какое главное пожелание для Динары в этот волшебный день?",
                 options: [
                     { text: "Чтобы сбывались все мечты и каждый день был полон счастья и любви! 🌟", correct: true },
                     { text: "Поймать Золотой Снитч 🟡", correct: false },
@@ -540,13 +540,13 @@
                     <h2 class="text-xl font-bold text-amber-300 font-magic gold-glow">
                         Этап 3: Испытание Хогвартса
                     </h2>
-                    <p class="text-xs sm:text-sm text-purple-100 font-medium leading-relaxed bg-purple-950/75 p-3.5 rounded-2xl border border-amber-400/30">
+                    <p class="text-xs sm:text-sm text-indigo-100 font-medium leading-relaxed bg-indigo-950/80 p-3.5 rounded-2xl border border-amber-400/30">
                         ${currentQ.q}
                     </p>
                     <div class="space-y-2.5 text-left">
-                        ${currentQ.options.map((opt, i) => `
+                        ${currentQ.options.map((opt) => `
                             <button onclick="handleQuizChoice(${opt.correct})"
-                                class="w-full p-3.5 rounded-2xl bg-purple-950/85 hover:bg-purple-900 border border-amber-400/40 text-xs sm:text-sm text-purple-100 font-medium transition active:scale-95 flex items-center justify-between gap-2">
+                                class="w-full p-3.5 rounded-2xl bg-indigo-950/90 hover:bg-indigo-900 border border-amber-400/40 text-xs sm:text-sm text-indigo-100 font-medium transition active:scale-95 flex items-center justify-between gap-2">
                                 <span>${opt.text}</span>
                                 <span class="text-amber-300">✨</span>
                             </button>
@@ -571,7 +571,7 @@
         }
 
         /* =========================================================================
-           ЭТАП 4: КОЛЕСО ДАРОВ (Вращающееся магическое колесо)
+           ЭТАП 4: КОЛЕСО ДАРОВ -> Тайник №4 (В шкафу с одеждой)
         ========================================================================= */
         let isWheelSpinning = false;
 
@@ -583,7 +583,7 @@
                     <h2 class="text-xl font-bold text-amber-300 font-magic gold-glow">
                         Этап 4: Колесо Даров
                     </h2>
-                    <p class="text-xs sm:text-sm text-purple-100 leading-relaxed">
+                    <p class="text-xs sm:text-sm text-indigo-100 leading-relaxed">
                         Крутани золотое колесо удачи Хогвартса, чтобы узнать, где спрятан четвёртый подарок!
                     </p>
 
@@ -595,7 +595,7 @@
                         
                         <!-- Само колесо -->
                         <div id="magic-wheel" class="w-full h-full rounded-full border-4 border-amber-400 shadow-[0_0_30px_rgba(251,191,36,0.45)] wheel-spinner relative overflow-hidden flex items-center justify-center"
-                            style="background: conic-gradient(#7e22ce 0deg 60deg, #d97706 60deg 120deg, #4c1d95 120deg 180deg, #f59e0b 180deg 240deg, #6b21a8 240deg 300deg, #b45309 300deg 360deg);">
+                            style="background: conic-gradient(#312e81 0deg 60deg, #d97706 60deg 120deg, #1e1b4b 120deg 180deg, #f59e0b 180deg 240deg, #3730a3 240deg 300deg, #b45309 300deg 360deg);">
                             <div class="w-16 h-16 rounded-full bg-slate-950 border-2 border-amber-300 flex items-center justify-center text-2xl shadow-inner z-10">
                                 ⚡
                             </div>
@@ -603,7 +603,7 @@
                     </div>
 
                     <button id="spin-wheel-btn" onclick="spinMagicWheel()"
-                        class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-purple-600 text-white font-bold text-base border border-amber-300 shadow-lg active:scale-95 transition">
+                        class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-indigo-600 text-white font-bold text-base border border-amber-300 shadow-lg active:scale-95 transition">
                         Крутить Колесо Даров 🎯
                     </button>
                 </div>
@@ -620,7 +620,6 @@
             btn.textContent = 'Магия вращается... ✨';
 
             const wheel = document.getElementById('magic-wheel');
-            // 5 полных оборотов + остановка на золотом призовом секторе
             const targetDegrees = 1800 + 210;
             wheel.style.transform = `rotate(${targetDegrees}deg)`;
 
@@ -630,18 +629,98 @@
         }
 
         /* =========================================================================
-           ЭТАП 5: ФИНАЛ — ГЛАВНЫЙ СЮРПРИЗ ДЛЯ ДИНАРЫ
+           ЭТАП 5: ЗАМОК ГРИНГОТТСА -> Тайник №5 (Под косметическим столиком)
         ========================================================================= */
+        let gringottsCode = "";
+
         function renderStage5(container) {
+            gringottsCode = "";
+            container.innerHTML = `
+                <div class="text-center space-y-3.5">
+                    <div class="text-4xl">🔐</div>
+                    <h2 class="text-xl font-bold text-amber-300 font-magic gold-glow">
+                        Этап 5: Сейф Банка Гринготтс
+                    </h2>
+                    <p class="text-xs sm:text-sm text-indigo-100 leading-relaxed">
+                        Гоблины охраняют пятый тайник! Введи 4-значный магический код, чтобы открыть сейф:
+                    </p>
+
+                    <div class="bg-indigo-950/80 border border-amber-400/30 rounded-xl p-2.5 text-xs text-amber-200">
+                        🦉 Подсказка гоблина: код платформы Хогвартс-Экспресса <strong>9 3/4</strong> превращается в <strong>0934</strong> (или введи <strong>2026</strong>)
+                    </div>
+
+                    <!-- Дисплей 4-значного кода -->
+                    <div id="gringotts-display" class="w-44 h-12 mx-auto bg-slate-950/90 border-2 border-amber-400 rounded-2xl flex items-center justify-center font-mono text-2xl tracking-[0.35em] text-amber-300 shadow-inner">
+                        ____
+                    </div>
+
+                    <!-- Цифровая клавиатура -->
+                    <div class="grid grid-cols-3 gap-2 w-56 mx-auto pt-1">
+                        ${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => `
+                            <button onclick="pressGringottsDigit('${num}')"
+                                class="py-2.5 rounded-xl bg-indigo-950/90 hover:bg-indigo-900 border border-amber-400/35 text-amber-200 font-bold text-base active:scale-95 transition">
+                                ${num}
+                            </button>
+                        `).join('')}
+                        <button onclick="clearGringottsCode()"
+                            class="py-2.5 rounded-xl bg-rose-950/90 border border-rose-400/40 text-rose-200 font-bold text-xs active:scale-95 transition">
+                            Сброс
+                        </button>
+                        <button onclick="pressGringottsDigit('0')"
+                            class="py-2.5 rounded-xl bg-indigo-950/90 hover:bg-indigo-900 border border-amber-400/35 text-amber-200 font-bold text-base active:scale-95 transition">
+                            0
+                        </button>
+                        <button onclick="verifyGringottsCode()"
+                            class="py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-extrabold text-xs border border-amber-200 active:scale-95 transition">
+                            Открыть
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function pressGringottsDigit(digit) {
+            if (gringottsCode.length < 4) {
+                gringottsCode += digit;
+                updateGringottsDisplay();
+            }
+        }
+
+        function clearGringottsCode() {
+            gringottsCode = "";
+            updateGringottsDisplay();
+        }
+
+        function updateGringottsDisplay() {
+            const display = document.getElementById('gringotts-display');
+            if (display) {
+                display.textContent = gringottsCode.padEnd(4, '_');
+            }
+        }
+
+        function verifyGringottsCode() {
+            const validCodes = ['0934', '2026', '1234', '7777', '0000'];
+            if (gringottsCode.length === 4 && validCodes.includes(gringottsCode)) {
+                openGiftModal(5);
+            } else {
+                showToast("Гоблины качают головой! Введи 0934 или 2026 🔑");
+                clearGringottsCode();
+            }
+        }
+
+        /* =========================================================================
+           ЭТАП 6: ФИНАЛ — ПОЗДРАВЛЕНИЕ ДЛЯ ДИНАРЫ + ТАЙНИК №6 (НА ХОЛОДИЛЬНИКЕ)
+        ========================================================================= */
+        function renderStage6(container) {
             container.innerHTML = `
                 <div class="text-center space-y-4">
                     <!-- Королевская золотая рамка с фото Dina.jpg -->
                     <div class="w-28 h-28 mx-auto portrait-frame">
-                        <div class="w-full h-full rounded-full overflow-hidden bg-purple-950 flex items-center justify-center relative">
+                        <div class="w-full h-full rounded-full overflow-hidden bg-indigo-950 flex items-center justify-center relative">
                             <img src="Dina.jpg" alt="Динара"
                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                                 class="w-full h-full object-cover">
-                            <div style="display: none;" class="w-full h-full flex-col items-center justify-center bg-gradient-to-b from-purple-900 to-indigo-950 text-amber-300">
+                            <div style="display: none;" class="w-full h-full flex-col items-center justify-center bg-gradient-to-b from-indigo-900 to-slate-950 text-amber-300">
                                 <span class="text-4xl">👑</span>
                                 <span class="text-[11px] font-magic mt-1">Динара</span>
                             </div>
@@ -650,25 +729,25 @@
 
                     <div class="space-y-1.5">
                         <span class="inline-block px-3 py-1 rounded-full bg-amber-400/20 border border-amber-400/50 text-amber-300 text-xs font-bold font-magic">
-                            ✨ Все 5 испытаний пройдены! ✨
+                            ✨ Все 6 испытаний пройдены! ✨
                         </span>
                         <h2 class="text-2xl font-bold text-amber-300 font-magic gold-glow leading-snug">
                             С Днём Рождения, Любимая Динара!
                         </h2>
                     </div>
 
-                    <p class="text-xs sm:text-sm text-purple-100 leading-relaxed">
+                    <p class="text-xs sm:text-sm text-indigo-100 leading-relaxed">
                         Ты настоящая волшебница, которая наполняет каждый день светом, теплом и счастьем. Пусть в твоей жизни всегда будет место чудесам, улыбкам и исполнению самых заветных желаний! ❤️
                     </p>
 
-                    <!-- Подсказка 5-го (главного) подарка -->
-                    <div class="bg-gradient-to-br from-purple-950 to-slate-900 border-2 border-amber-400 rounded-2xl p-4 text-left shadow-[0_0_25px_rgba(251,191,36,0.3)] space-y-1.5">
+                    <!-- Подсказка 6-го (главного) подарка на холодильнике -->
+                    <div class="bg-gradient-to-br from-indigo-950 to-slate-900 border-2 border-amber-400 rounded-2xl p-4 text-left shadow-[0_0_25px_rgba(251,191,36,0.35)] space-y-1.5">
                         <div class="flex items-center gap-2 text-amber-300 font-bold text-xs sm:text-sm font-magic">
                             <span>🏆</span>
-                            <span>Главный Финальный Сюрприз (Подарок №5):</span>
+                            <span>Главный Финальный Сюрприз (Подарок №6):</span>
                         </div>
                         <p class="text-sm text-white font-medium leading-relaxed">
-                            ${giftClues[4]}
+                            ${giftClues[5]}
                         </p>
                     </div>
 
@@ -683,7 +762,7 @@
         }
 
         function launchRoyalConfetti() {
-            const colors = ['#fbbf24', '#f59e0b', '#dc2626', '#9333ea', '#ffffff'];
+            const colors = ['#fbbf24', '#f59e0b', '#dc2626', '#6366f1', '#ffffff'];
             confetti({
                 particleCount: 110,
                 spread: 80,
@@ -714,7 +793,7 @@
         (function spawnMagicParticles() {
             const container = document.getElementById('particles-container');
             const symbols = ['✨', '⭐', '⚡', '🪄', '✦'];
-            for (let i = 0; i < 22; i++) {
+            for (let i = 0; i < 24; i++) {
                 const span = document.createElement('span');
                 span.textContent = symbols[i % symbols.length];
                 span.style.left = Math.random() * 100 + 'vw';
